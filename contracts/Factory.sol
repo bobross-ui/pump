@@ -20,7 +20,7 @@ contract Factory {
         bool isOpen;
     }
 
-    event Crea
+    event Created(address indexed token);
 
     constructor(uint256 _fee) {
         fee = _fee;
@@ -54,5 +54,10 @@ contract Factory {
 
         //it's livee
         emit Created(address(token));
+    }
+
+    function buy(address _token, uint256 _amount) external payable {
+
+        Token(_token).transfer(msg.sender, _amount);
     }
 }
