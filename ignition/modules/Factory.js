@@ -4,6 +4,13 @@
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 const { ethers } = require("hardhat");
 
+const FEE = ethers.parseEther("0.01")
+
 module.exports = buildModule("FactoryModule", (m) => {
 
+    const fee = m.getParameter("fee", FEE)
+
+    const factory = m.contract("Factory", [fee])
+
+    return { factory }
 })
