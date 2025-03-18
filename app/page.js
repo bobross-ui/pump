@@ -15,11 +15,47 @@ import config from "./config.json"
 import images from "./images.json"
 
 export default function Home() {
+  const [provider, setProvider] = useState(null)
+  const [account, setAccount] = useState(null)
+  const [factory, setFactory] = useState(null)
+  const [fee, setFee] = useState(0)
+  const [showCreate, setShowCreate] = useState(false)
+
+  function toggleCreate() {
+    setShowCreate(true)
+  }
+
+  async function loadBlockChainData() {
+    const provider = new ethers.BrowserProvider(window.ethereum)
+    setProvider(provider)
+
+    const network = await provider.getNetwork()
+
+    const factory = new ethers.Contract(config[network.chainId].factory.address, Factory, provider)
+    setFactory(factory)
+
+    const fee = await factory.fee()
+
+  }
+
+  useEffect(() => {
+    loadBlockChainData()
+  }, [])
 
   return (
     <div className="page">
+      <Header account={account} setAccount={setAccount} />
 
-      <h1 style={{ padding: "1em" }}>fun.pump</h1>
+      <main>
+        <div className="create">
+          <button onClick={toggleCreate} className="btn--fancy">
+            {"[ start a new token ]"}
+          </button>
+        </div>
+      </main>
+
+      {showCreate && (<List toggleCreate={() => { }} fee={fee} provider={provider} factory={factory} />)}
+
 
     </div>
   );
