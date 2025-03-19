@@ -19,10 +19,18 @@ export default function Home() {
   const [account, setAccount] = useState(null)
   const [factory, setFactory] = useState(null)
   const [fee, setFee] = useState(0)
+  const [tokens, setTokens] = useState([])
+  const [token, setToken] = useState(null)
   const [showCreate, setShowCreate] = useState(false)
+  const [showTrade, setShowTrade] = useState(false)
 
   function toggleCreate() {
-    setShowCreate(true)
+    showCreate ? setShowCreate(false) : setShowCreate(true)
+  }
+
+  function toggleTrade(token) {
+    setToken(token)
+    showTrade ? setShowTrade(false) : setShowTrade(true)
   }
 
   async function loadBlockChainData() {
@@ -35,6 +43,28 @@ export default function Home() {
     setFactory(factory)
 
     const fee = await factory.fee()
+    setFee(fee)
+
+    const totalTokens = await factory.totalTokens()
+    const tokens = []
+
+    for (let i = 0; i < totalTokens; i++) {
+      if (i == 6) break;
+      const tokenSale = await factory.getTokenSale(i)
+
+      const token = {
+        token: tokenSale.token,
+        name: tokenSale.name,
+        creator: tokenSale.creator,
+        sold: tokenSale.sold,
+        raised: tokenSale.raised,
+        isOpen: tokenSale.isOpen,
+        image: images[i]
+      }
+      tokens.push(token)
+    }
+
+    setTokens(tokens.reverse())
 
   }
 
@@ -48,13 +78,41 @@ export default function Home() {
 
       <main>
         <div className="create">
-          <button onClick={toggleCreate} className="btn--fancy">
-            {"[ start a new token ]"}
+          <button onClick={factory && account && toggleCreate} className="btn--fancy">
+            {!factory ? (
+              "[ contract not deployed ]"
+            ) : !account ? (
+              "[ please connect account ]"
+            ) : (
+              "[ start a new token ]"
+            )}
           </button>
+        </div>
+
+        <div className="listings">
+          <h1>new listings</h1>
+
+          <div className="tokens">
+            {!account ? (
+              <p>please connect wallet</p>
+            ) : tokens.length === 0 ? (
+              <p>no tokens listed</p>
+            ) : (
+              tokens.map((token, index) => (
+                <Token
+                  toggleTrade={toggleTrade}
+                  token={token}
+                  key={index}
+                />
+              ))
+            )}
+          </div>
         </div>
       </main>
 
-      {showCreate && (<List toggleCreate={() => { }} fee={fee} provider={provider} factory={factory} />)}
+      {showCreate && (<List toggleCreate={toggleCreate} fee={fee} provider={provider} factory={factory} />)}
+
+      {showTrade && (<Trade toggleTrade={toggleTrade} token={token} provider={provider} factory={factory}/>)}
 
 
     </div>
