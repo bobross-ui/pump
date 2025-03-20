@@ -304,14 +304,6 @@ main .listings h1 {
   transition: opacity 0.3s ease;
 }
 
-.token:nth-child(1) {
-  box-shadow: 0 8px 32px rgba(138, 43, 226, 0.15);
-}
-
-.token:nth-child(1)::before {
-  opacity: 1;
-}
-
 .token:hover {
   transform: translateY(-10px);
   border-color: rgba(255, 255, 255, 0.2);
