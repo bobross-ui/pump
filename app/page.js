@@ -78,25 +78,29 @@ export default function Home() {
 
       <main>
         <div className="create">
+          <h1>Discover & Trade Artistic Tokens</h1>
+          <p className="create-description">
+            Browse the latest token listings or create your own artistic token to share with the community
+          </p>
           <button onClick={factory && account && toggleCreate} className="btn--fancy">
             {!factory ? (
-              "[ contract not deployed ]"
+              "Contract not deployed"
             ) : !account ? (
-              "[ please connect account ]"
+              "Connect wallet to create"
             ) : (
-              "[ start a new token ]"
+              "Create new token"
             )}
           </button>
         </div>
 
         <div className="listings">
-          <h1>new listings</h1>
+          <h2>New Listings</h2>
 
           <div className="tokens">
             {!account ? (
-              <p>please connect wallet</p>
+              <p>Please connect your wallet to view tokens</p>
             ) : tokens.length === 0 ? (
-              <p>no tokens listed</p>
+              <p>No tokens listed yet</p>
             ) : (
               tokens.map((token, index) => (
                 <Token
